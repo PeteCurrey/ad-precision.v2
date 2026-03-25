@@ -76,7 +76,10 @@ export default function Hero({ ready }: { ready: boolean }) {
             </div>
 
             {/* Title with built-in masking for animation */}
-            <h1 className="font-[family-name:var(--font-display)] font-bold text-[var(--hero-size)] text-[#F2F2F0] leading-[0.92] uppercase -tracking-[0.02em]">
+            <h1 
+              className="font-[family-name:var(--font-display)] font-bold text-[#F2F2F0] leading-[0.85] uppercase -tracking-[0.03em]"
+              style={{ fontSize: "clamp(64px, 14vw, 240px)" }}
+            >
               <div className="overflow-hidden pb-1 max-h-min">
                 <div ref={(el) => { h1Lines.current[0] = el; }}>WE BUILD</div>
               </div>

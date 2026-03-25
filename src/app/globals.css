@@ -22,7 +22,7 @@
   --muted: #6B6B72;
 
   /* Sizing */
-  --hero-size: clamp(56px, 8vw, 128px);
+  --hero-size: clamp(72px, 11vw, 180px);
   --h2-size: clamp(36px, 5vw, 80px);
   --h3-size: clamp(24px, 3vw, 48px);
   --body-size: clamp(13px, 1.1vw, 15px);

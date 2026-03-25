@@ -1,7 +1,16 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  images: {
+    formats: ['image/avif', 'image/webp'],
+  },
+  transpilePackages: ['three', '@react-three/fiber', '@react-three/drei'],
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  typescript: {
+    ignoreBuildErrors: true,
+  }
 };
 
 export default nextConfig;

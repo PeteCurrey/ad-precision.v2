@@ -1,26 +1,113 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-black: var(--black);
+  --color-white: var(--white);
+  --color-accent: var(--accent);
+  --color-mid: var(--mid);
+  --color-border: var(--border);
+  --color-muted: var(--muted);
+
+  --font-display: var(--font-syne), sans-serif;
+  --font-body: var(--font-dm-mono), monospace;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+:root {
+  /* Core Palette */
+  --black: #050508;
+  --white: #F2F2F0;
+  --accent: #C8F135;
+  --mid: #1A1A1F;
+  --border: #222228;
+  --muted: #6B6B72;
+
+  /* Sizing */
+  --hero-size: clamp(56px, 8vw, 128px);
+  --h2-size: clamp(36px, 5vw, 80px);
+  --h3-size: clamp(24px, 3vw, 48px);
+  --body-size: clamp(13px, 1.1vw, 15px);
+  --label-size: 11px;
+
+  /* Spacing */
+  --section-gap: clamp(80px, 12vw, 160px);
+  --gutter: clamp(20px, 4vw, 60px);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--black);
+  color: var(--white);
+  font-family: var(--font-body);
+  /* Text smoothing for dark mode */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  margin: 0;
+  font-weight: 700;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Lenis recommended CSS */
+html.lenis, html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-smooth iframe {
+  pointer-events: none;
+}
+
+@keyframes scroll-down {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(200%); }
+}
+
+/* Typography for Articles */
+.prose-avorria h2 {
+  font-size: var(--h3-size);
+  color: var(--white);
+  margin-top: 3rem;
+  margin-bottom: 1.5rem;
+  line-height: 1.1;
+}
+
+.prose-avorria p {
+  font-family: var(--font-body);
+  font-size: 16px;
+  color: var(--muted);
+  line-height: 1.8;
+  margin-bottom: 2rem;
+}
+
+.prose-avorria li {
+  font-family: var(--font-body);
+  font-size: 16px;
+  color: var(--muted);
+  line-height: 1.8;
+  margin-bottom: 1rem;
+  list-style-type: square;
+}
+
+.prose-avorria strong {
+  color: var(--white);
+  font-weight: 700;
 }

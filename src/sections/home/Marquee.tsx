@@ -45,14 +45,27 @@ export default function Marquee() {
   }, []);
 
   return (
-    <section ref={containerRef} className="w-full h-[80px] bg-[#0E0E13] border-y border-[#222228] overflow-hidden flex items-center select-none relative z-10">
+    <section 
+      ref={containerRef} 
+      className="w-full h-[80px] bg-[#0A0A0A] border-y border-[#1E1E1E] overflow-hidden flex items-center select-none relative z-10 group"
+      onMouseEnter={() => {
+        if (trackRef.current) {
+          gsap.to(trackRef.current, { timeScale: 0.2, duration: 1, overwrite: true });
+        }
+      }}
+      onMouseLeave={() => {
+        if (trackRef.current) {
+          gsap.to(trackRef.current, { timeScale: 1, duration: 1, overwrite: true });
+        }
+      }}
+    >
       <div className="flex w-max" ref={trackRef}>
         {[...Array(2)].map((_, groupIdx) => (
           <div key={groupIdx} className="flex items-center">
             {items.map((item, idx) => (
-              <div key={`${groupIdx}-${idx}`} className="flex items-center font-[family-name:var(--font-body)] text-[12px] text-[#6B6B72] whitespace-nowrap">
-                <span className="px-6">{item}</span>
-                <span className="text-[#C8F135] font-bold text-lg leading-none transform translate-y-[-2px]">·</span>
+              <div key={`${groupIdx}-${idx}`} className="flex items-center font-[family-name:var(--font-body)] text-[11px] text-[#6B6B6B] whitespace-nowrap uppercase tracking-[0.15em]">
+                <span className="px-8">{item}</span>
+                <span className="text-[#C8F135] font-bold text-lg leading-none transform translate-y-[-1px] opacity-40">·</span>
               </div>
             ))}
           </div>

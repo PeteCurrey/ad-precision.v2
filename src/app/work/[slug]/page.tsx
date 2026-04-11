@@ -1,127 +1,170 @@
+import { caseStudies, getCaseStudy, getNextCaseStudy } from "@/data/case-studies";
 import { notFound } from "next/navigation";
 import TransitionLink from "@/components/ui/TransitionLink";
 import type { Metadata } from "next";
 
-const MOCK_WORK = [
-  { 
-    slug: "nexus-group",
-    client: "NEXUS GROUP", 
-    tags: ["WEB DESIGN", "SEO"], 
-    title: "Redefining the digital real estate experience.", 
-    stat: "+312% organic traffic",
-    problem: "Nexus Group was struggling with a legacy WordPress site that took over 6 seconds to load. Their high-value property listings were being buried by slow search performance and poor mobile UX.",
-    solution: "We architected a headless solution using Next.js and a custom CMS. We optimized listing high-res media using Next/Image and implemented a lightning-fast map search. Technical SEO was baked into the routing structure.",
-    results: "312% increase in organic reach within 4 months. Average session duration increased by 80%. Mobile conversion rate doubled."
-  },
-  { 
-    slug: "auralight",
-    client: "AURALIGHT", 
-    tags: ["AI IMPLEMENTATION"], 
-    title: "Automated content engines for e-commerce.", 
-    stat: "20hrs/week saved",
-    problem: "Auralight's marketing team was manually drafting 50+ product descriptions and social posts per week, leading to creative burnout and inconsistent brand voice.",
-    solution: "We built a custom AI Content Engine using the Claude API. The system ingest product specs and generates brand-perfect copy across 4 channels instantly. We included a human-in-the-loop review interface.",
-    results: "Saved 20+ hours of manual work per week. Production speed increased by 400%. Brand consistency reached a verified 98% alignment."
-  },
-  { 
-    slug: "velocity",
-    client: "VELOCITY", 
-    tags: ["PAID MEDIA"], 
-    title: "Scaling SaaS acquisition by 400%.", 
-    stat: "400% ROAS",
-    problem: "Velocity was burning £15k/month on Google Ads with 'broad match' strategies that brought in low-quality leads. Their CPL was unsustainable for their seat-based pricing model.",
-    solution: "We rebuilt their account with a surgical 'Exact Match' hierarchy. We implemented offline conversion tracking to feed lead quality data back to the Google algorithm and built high-performance landing pages for every ad group.",
-    results: "Achieved a stable 400% ROAS. CPL reduced by 45%. Lead quality increased, leading to a 30% higher sales-qualified lead (SQL) rate."
-  },
-  { 
-    slug: "omni",
-    client: "OMNI", 
-    tags: ["WEB DESIGN", "E-COMMERCE"], 
-    title: "headless Shopify architecture.", 
-    stat: "98/100 PageSpeed",
-    problem: "Omni's standard Shopify theme was struggling under the weight of 20+ apps, leading to sub-par Core Web Vitals and a clunky checkout experience.",
-    solution: "We decoupled the frontend using Next.js and used Shopify as a headless backend. This removed the 'liquid' overhead and allowed us to build a custom, ultra-fast UI with zero layout shift.",
-    results: "98/100 PageSpeed score. Cart abandonment dropped by 15%. Direct revenue from mobile users increased by 22%."
-  },
-];
-
 export async function generateStaticParams() {
-  return MOCK_WORK.map((w) => ({ slug: w.slug }));
+  return caseStudies.map(cs => ({ slug: cs.slug }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
-  const project = MOCK_WORK.find((w) => w.slug === slug);
-  if (!project) return { title: "Not Found" };
+  const cs = getCaseStudy(slug);
+  if (!cs) return { title: "Not Found" };
   return {
-    title: `${project.client} Case Study | Avorria`,
-    description: project.title,
+    title: `${cs.client} — ${cs.tagline}`,
+    description: `Case study: ${cs.tagline} ${cs.results[0]?.metric} ${cs.results[0]?.label}.`,
   };
 }
 
 export default async function CaseStudyPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const project = MOCK_WORK.find((w) => w.slug === slug);
+  const cs = getCaseStudy(slug);
+  if (!cs) notFound();
 
-  if (!project) notFound();
+  const nextCs = getNextCaseStudy(slug);
+  const otherProjects = caseStudies.filter(c => c.slug !== slug).slice(0, 3);
 
   return (
-    <main className="w-full bg-[#050508] min-h-screen text-white">
-      {/* Hero */}
-      <section className="pt-48 pb-24 px-[var(--gutter)] max-w-[1200px] mx-auto border-b border-[#222228]">
-        <div className="flex flex-col gap-6">
-          <div className="flex items-center gap-4">
-             <span className="text-[11px] text-[#C8F135] uppercase tracking-widest font-[family-name:var(--font-body)]">{project.client}</span>
-             <span className="text-[#333338]">/</span>
-             <span className="text-[11px] text-[#6B6B72] uppercase tracking-widest font-[family-name:var(--font-body)]">{project.tags.join(' · ')}</span>
+    <main className="w-full bg-[#0A0A0A] min-h-screen text-[#F5F5F0]">
+
+      {/* ─── 1. HERO ─── */}
+      <section className="w-full min-h-[90svh] flex flex-col justify-end pt-40 pb-16 px-[var(--gutter)]">
+        <div className="max-w-[1400px] mx-auto w-full">
+          <div className="flex items-center gap-4 mb-6">
+            <span className="font-[family-name:var(--font-body)] text-[11px] text-[#C8F135] uppercase tracking-widest">{cs.heroLabel}</span>
+            <span className="text-[#1E1E1E]">|</span>
+            <span className="font-[family-name:var(--font-body)] text-[11px] text-[#6B6B6B] uppercase tracking-widest">{cs.services.join(" · ")}</span>
           </div>
-          <h1 className="font-[family-name:var(--font-display)] font-bold text-[clamp(40px,8vw,100px)] leading-[0.9] tracking-tight mb-8">
-            {project.title}
+          <h1 className="font-[family-name:var(--font-display)] font-bold leading-[0.88] -tracking-[0.02em] mb-8" style={{ fontSize: "clamp(48px, 10vw, 140px)" }}>
+            {cs.tagline}
           </h1>
-          <div className="bg-[#C8F135] text-black w-max px-6 py-4 font-bold text-[18px]">
-            {project.stat}
+
+          {/* Key stat callout */}
+          <div className="flex flex-wrap gap-8 mt-8 py-8 border-y border-[#1E1E1E]">
+            {cs.results.map(r => (
+              <div key={r.label} className="flex flex-col gap-1">
+                <span className="font-[family-name:var(--font-display)] font-bold text-[36px] md:text-[52px] text-[#C8F135] leading-none">{r.metric}</span>
+                <span className="font-[family-name:var(--font-body)] text-[10px] text-[#6B6B6B] uppercase tracking-widest">{r.label}</span>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Content */}
-      <section className="py-24 px-[var(--gutter)] max-w-[1200px] mx-auto grid grid-cols-1 md:grid-cols-2 gap-24">
-         <div className="flex flex-col gap-12">
-            <div>
-               <h2 className="text-[12px] text-[#6B6B72] uppercase tracking-[0.2em] mb-6">THE CHALLENGE</h2>
-               <p className="text-[20px] text-[#F2F2F0] leading-relaxed opacity-80">{project.problem}</p>
-            </div>
-            <div>
-               <h2 className="text-[12px] text-[#6B6B72] uppercase tracking-[0.2em] mb-6">THE SOLUTION</h2>
-               <p className="text-[18px] text-[#6B6B72] leading-relaxed">{project.solution}</p>
-            </div>
-         </div>
-         <div className="flex flex-col gap-12 bg-[#0A0A0F] border border-[#222228] p-12 justify-center">
-            <h2 className="text-[12px] text-[#C8F135] uppercase tracking-[0.2em] mb-4">KEY OUTCOME</h2>
-            <div className="text-[48px] font-[family-name:var(--font-display)] font-bold text-white mb-6 leading-tight">
-               {project.stat}
-            </div>
-            <p className="text-[15px] text-[#6B6B72] leading-relaxed">{project.results}</p>
-            <TransitionLink href="/start-a-project" className="mt-8 bg-[#C8F135] text-[#050508] font-bold text-[11px] uppercase py-4 text-center hover:bg-white transition-colors">
-               SCALE YOUR BUSINESS →
-            </TransitionLink>
-         </div>
+      {/* ─── 2. CHALLENGE / SOLUTION ─── */}
+      <section className="w-full py-24 px-[var(--gutter)] border-t border-[#1E1E1E]">
+        <div className="max-w-[1400px] mx-auto grid grid-cols-1 md:grid-cols-2 gap-24">
+          <div>
+            <div className="font-[family-name:var(--font-body)] text-[10px] text-[#6B6B6B] uppercase tracking-[0.2em] mb-6">THE CHALLENGE</div>
+            <p className="font-[family-name:var(--font-display)] text-[20px] text-[#F5F5F0] leading-relaxed">{cs.challenge}</p>
+          </div>
+          <div>
+            <div className="font-[family-name:var(--font-body)] text-[10px] text-[#6B6B6B] uppercase tracking-[0.2em] mb-6">OUR APPROACH</div>
+            <p className="font-[family-name:var(--font-display)] text-[16px] text-[#6B6B6B] leading-relaxed">{cs.approach}</p>
+          </div>
+        </div>
       </section>
 
-      {/* Recommended */}
-      <section className="py-24 px-[var(--gutter)] border-t border-[#222228]">
-         <div className="max-w-[1200px] mx-auto">
-            <h3 className="text-[11px] text-[#6B6B72] uppercase tracking-widest mb-12">SEE MORE WORK</h3>
-            <div className="flex gap-12 overflow-x-auto pb-8 scrollbar-hide">
-               {MOCK_WORK.filter(w => w.slug !== slug).map(w => (
-                 <TransitionLink href={`/work/${w.slug}`} key={w.slug} className="min-w-[300px] group">
-                    <div className="aspect-video bg-[#0A0A0F] border border-[#222228] mb-4 group-hover:border-[#C8F135] transition-colors" />
-                    <h4 className="text-white font-bold group-hover:text-[#C8F135] transition-colors">{w.client}</h4>
-                    <p className="text-[12px] text-[#6B6B72] uppercase tracking-widest mt-1">{w.tags[0]}</p>
-                 </TransitionLink>
-               ))}
+      {/* ─── 3. SOLUTION DEEP DIVE ─── */}
+      <section className="w-full bg-[#111111] py-24 px-[var(--gutter)] border-y border-[#1E1E1E]">
+        <div className="max-w-[1400px] mx-auto">
+          <div className="font-[family-name:var(--font-body)] text-[10px] text-[#C8F135] uppercase tracking-[0.2em] mb-6">THE SOLUTION</div>
+          <p className="font-[family-name:var(--font-display)] text-[18px] text-[#F5F5F0] leading-relaxed max-w-[800px]">{cs.solution}</p>
+
+          {/* Tech Stack */}
+          {cs.techStack && (
+            <div className="flex flex-wrap gap-3 mt-12 pt-8 border-t border-[#1E1E1E]">
+              <span className="font-[family-name:var(--font-body)] text-[10px] text-[#6B6B6B] uppercase tracking-widest mr-4 self-center">BUILT WITH</span>
+              {cs.techStack.map(tech => (
+                <span key={tech} className="font-[family-name:var(--font-body)] text-[11px] text-[#6B6B6B] border border-[#1E1E1E] px-3 py-1.5 uppercase tracking-wider">{tech}</span>
+              ))}
             </div>
-         </div>
+          )}
+        </div>
+      </section>
+
+      {/* ─── 4. RESULTS ─── */}
+      <section className="w-full py-24 px-[var(--gutter)]">
+        <div className="max-w-[1400px] mx-auto">
+          <div className="font-[family-name:var(--font-body)] text-[10px] text-[#C8F135] uppercase tracking-[0.2em] mb-12">KEY OUTCOMES</div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+            {cs.results.map(r => (
+              <div key={r.label} className="flex flex-col gap-2 py-8 border-t border-[#1E1E1E]">
+                <span className="font-[family-name:var(--font-display)] font-bold text-[48px] md:text-[64px] text-[#C8F135] leading-none">{r.metric}</span>
+                <span className="font-[family-name:var(--font-body)] text-[10px] text-[#6B6B6B] uppercase tracking-widest">{r.label}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ─── 5. TESTIMONIAL ─── */}
+      {cs.testimonial && (
+        <section className="w-full bg-[#111111] py-24 px-[var(--gutter)] border-y border-[#1E1E1E]">
+          <div className="max-w-[800px] mx-auto text-center">
+            <div className="font-[family-name:var(--font-display)] font-bold text-[80px] text-[#C8F135] opacity-20 leading-none mb-[-40px] select-none">&ldquo;</div>
+            <blockquote className="font-[family-name:var(--font-display)] text-[20px] md:text-[28px] text-[#F5F5F0] leading-relaxed mb-8 relative z-10">
+              {cs.testimonial.quote}
+            </blockquote>
+            <div className="flex flex-col gap-1">
+              <span className="font-[family-name:var(--font-display)] font-bold text-[14px] text-[#F5F5F0]">{cs.testimonial.name}</span>
+              <span className="font-[family-name:var(--font-body)] text-[11px] text-[#6B6B6B] uppercase tracking-widest">{cs.testimonial.role}</span>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ─── 6. NEXT PROJECT + MORE WORK ─── */}
+      <section className="w-full py-24 px-[var(--gutter)] border-t border-[#1E1E1E]">
+        <div className="max-w-[1400px] mx-auto">
+          {/* Next Project */}
+          {nextCs && (
+            <TransitionLink
+              href={`/work/${nextCs.slug}`}
+              className="group flex flex-col md:flex-row items-start md:items-center justify-between w-full py-12 border-b border-[#1E1E1E] hover:border-[#C8F135] transition-colors mb-16"
+            >
+              <div className="flex flex-col gap-2">
+                <span className="font-[family-name:var(--font-body)] text-[10px] text-[#6B6B6B] uppercase tracking-widest">NEXT PROJECT</span>
+                <h3 className="font-[family-name:var(--font-display)] font-bold text-[32px] md:text-[48px] text-[#F5F5F0] group-hover:text-[#C8F135] transition-colors">{nextCs.client}</h3>
+                <span className="font-[family-name:var(--font-body)] text-[12px] text-[#6B6B6B] uppercase tracking-widest">{nextCs.services.join(" · ")}</span>
+              </div>
+              <span className="font-[family-name:var(--font-display)] text-[80px] text-[#1E1E1E] group-hover:text-[#C8F135] transition-colors leading-none">→</span>
+            </TransitionLink>
+          )}
+
+          {/* More Work */}
+          <h3 className="font-[family-name:var(--font-body)] text-[10px] text-[#6B6B6B] uppercase tracking-widest mb-8">MORE WORK</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {otherProjects.map(p => (
+              <TransitionLink
+                key={p.slug}
+                href={`/work/${p.slug}`}
+                className="group bg-[#111111] border border-[#1E1E1E] hover:border-[#C8F135] transition-colors p-8 flex flex-col gap-4"
+                data-cursor-text="VIEW →"
+              >
+                <span className="font-[family-name:var(--font-body)] text-[10px] text-[#C8F135] uppercase tracking-widest">{p.services.join(" · ")}</span>
+                <h4 className="font-[family-name:var(--font-display)] font-bold text-[18px] text-[#F5F5F0] group-hover:text-[#C8F135] transition-colors">{p.client}</h4>
+                <p className="font-[family-name:var(--font-display)] text-[13px] text-[#6B6B6B] leading-relaxed">{p.tagline}</p>
+                <div className="flex gap-4 mt-auto pt-4 border-t border-[#1E1E1E]">
+                  <span className="font-[family-name:var(--font-display)] font-bold text-[#C8F135] text-[16px]">{p.results[0]?.metric}</span>
+                  <span className="font-[family-name:var(--font-body)] text-[10px] text-[#6B6B6B] uppercase tracking-widest self-center">{p.results[0]?.label}</span>
+                </div>
+              </TransitionLink>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ─── CTA ─── */}
+      <section className="w-full py-16 border-t border-[#1E1E1E] text-center px-[var(--gutter)]">
+        <TransitionLink
+          href="/start-a-project"
+          className="inline-block bg-[#C8F135] text-[#0A0A0A] font-[family-name:var(--font-display)] font-bold text-[13px] uppercase px-10 py-5 hover:bg-[#9DB82A] transition-colors"
+          data-magnetic
+        >
+          START YOUR PROJECT →
+        </TransitionLink>
       </section>
     </main>
   );

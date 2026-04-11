@@ -43,7 +43,7 @@ export default function LocationStrip() {
   }, []);
 
   return (
-    <section ref={containerRef} className="w-full bg-[#050508] py-8 overflow-hidden flex items-center select-none relative z-10 border-t border-[#222228]">
+    <section ref={containerRef} className="w-full bg-[#0A0A0A] py-8 overflow-hidden flex items-center select-none relative z-10 border-t border-[#1E1E1E]">
       <div className="flex w-max gap-4" ref={trackRef}>
         {[...Array(2)].map((_, groupIdx) => (
           <div key={groupIdx} className="flex items-center gap-4 px-2">
@@ -51,7 +51,7 @@ export default function LocationStrip() {
               <TransitionLink 
                 key={`${groupIdx}-${idx}`} 
                 href={`/${loc.toLowerCase().replace(/ /g, '-')}`}
-                className="font-[family-name:var(--font-body)] text-[11px] text-[#6B6B72] uppercase tracking-widest px-5 py-2.5 rounded-full border border-[#222228] hover:border-[#C8F135] hover:text-[#C8F135] transition-colors duration-300"
+                className="font-[family-name:var(--font-body)] text-[10px] text-[#6B6B6B] uppercase tracking-[0.15em] px-5 py-2.5 rounded-full border border-[#1E1E1E] hover:border-[#C8F135] hover:text-[#C8F135] transition-colors duration-300"
                 data-magnetic
               >
                 {loc}

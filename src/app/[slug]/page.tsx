@@ -43,30 +43,41 @@ export default async function TopLevelSlugPage({ params }: { params: Promise<{ s
 
 function LocationHub({ location }: { location: SEOLocation }) {
   return (
-    <main className="w-full bg-[#050508] min-h-screen">
+    <main className="w-full bg-[#0A0A0A] min-h-screen text-[#F5F5F0]">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessSchema(location.name)) }} />
+      
+      {/* ─── HERO ─── */}
       <section className="w-full min-h-[80svh] flex flex-col justify-center pt-40 pb-24 px-[var(--gutter)] max-w-[1400px] mx-auto">
-        <div className="font-[family-name:var(--font-body)] text-[11px] text-[#C8F135] tracking-[0.15em] uppercase mb-10">[ REGIONAL HUB · {location.name.toUpperCase()} ]</div>
-        <h1 className="font-[family-name:var(--font-display)] font-bold text-[#F2F2F0] leading-[0.92] mb-8" style={{ fontSize: "clamp(48px, 8vw, 120px)" }}>
-          Avorria <br /><span className="text-[#C8F135]">{location.name}.</span>
+        <div className="font-[family-name:var(--font-body)] text-[11px] text-[#C8F135] tracking-[0.2em] uppercase mb-10">[ REGIONAL HUB · {location.name.toUpperCase()} ]</div>
+        <h1 className="font-[family-name:var(--font-display)] font-bold leading-[0.9] -tracking-[0.03em] mb-12" style={{ fontSize: "clamp(48px, 10vw, 150px)" }}>
+          Avorria<br /><span className="text-[#6B6B6B]">{location.name}.</span>
         </h1>
-        <p className="font-[family-name:var(--font-body)] text-[16px] text-[#6B6B72] leading-relaxed max-w-[560px] mb-12">{location.context}</p>
+        <p className="font-[family-name:var(--font-display)] text-[20px] text-[#6B6B6B] leading-relaxed max-w-[700px] mb-16">{location.context}</p>
         
         {location.landmark && (
-          <div className="flex items-center gap-4 mb-12 py-4 border-y border-[#222228] w-max">
-            <span className="text-[#6B6B72] text-[10px] uppercase tracking-widest">Local Context:</span>
-            <span className="text-[#F2F2F0] text-[12px] font-bold uppercase tracking-wider">{location.landmark}</span>
-            <span className="text-[#333338]">|</span>
-            <span className="text-[#6B6B72] text-[12px] italic">{location.vibe}</span>
+          <div className="flex flex-col md:flex-row md:items-center gap-8 py-8 border-y border-[#1E1E1E]">
+            <div className="flex flex-col gap-1">
+              <span className="font-[family-name:var(--font-body)] text-[10px] text-[#6B6B6B] uppercase tracking-[0.2em]">LOCAL CONTEXT</span>
+              <span className="font-[family-name:var(--font-display)] font-bold text-[18px] text-[#F5F5F0]">{location.landmark}</span>
+            </div>
+            <div className="hidden md:block w-px h-10 bg-[#1E1E1E]" />
+            <div className="flex flex-col gap-1">
+              <span className="font-[family-name:var(--font-body)] text-[10px] text-[#6B6B6B] uppercase tracking-[0.2em]">REGIONAL VIBE</span>
+              <span className="font-[family-name:var(--font-display)] italic text-[18px] text-[#6B6B6B] uppercase">{location.vibe}</span>
+            </div>
           </div>
         )}
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-16">
           {services.map(s => (
             <TransitionLink key={s.slug} href={`/${s.slug}/${location.slug}`}
-              className="p-8 border border-[#222228] bg-[#0A0A0F] hover:border-[#C8F135] transition-colors group">
-              <h3 className="font-[family-name:var(--font-display)] font-bold text-white text-[16px] mb-4 group-hover:text-[#C8F135] transition-colors">{s.shortName} in {location.name} →</h3>
-              <p className="font-[family-name:var(--font-body)] text-[12px] text-[#6B6B72] leading-relaxed">{s.desc}</p>
+              className="group p-10 border border-[#1E1E1E] bg-[#111111] hover:border-[#C8F135] transition-all duration-500 flex flex-col gap-6">
+              <div className="flex justify-between items-start">
+                 <h3 className="font-[family-name:var(--font-display)] font-bold text-[#F5F5F0] text-[18px] group-hover:text-[#C8F135] transition-colors leading-[1.1]">{s.shortName} in {location.name}</h3>
+                 <span className="text-[#C8F135] text-[20px] translate-x-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">↗</span>
+              </div>
+              <p className="font-[family-name:var(--font-display)] text-[13px] text-[#6B6B6B] leading-relaxed flex-1">{s.desc}</p>
+              <span className="font-[family-name:var(--font-body)] text-[10px] text-[#C8F135] uppercase tracking-widest mt-4">DISCOVER SERVICE →</span>
             </TransitionLink>
           ))}
         </div>
@@ -77,62 +88,67 @@ function LocationHub({ location }: { location: SEOLocation }) {
 
 function ServiceHub({ service }: { service: SEOService }) {
   return (
-    <main className="w-full bg-[#050508] min-h-screen pb-24">
+    <main className="w-full bg-[#0A0A0A] min-h-screen pb-24 text-[#F5F5F0]">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceSchema({ name: service.name, description: service.desc })) }} />
       
-      {/* Hero */}
-      <section className="w-full min-h-[80svh] flex flex-col justify-center pt-40 pb-24 px-[var(--gutter)] max-w-[1400px] mx-auto">
-        <div className="font-[family-name:var(--font-body)] text-[11px] text-[#C8F135] tracking-[0.15em] uppercase mb-10">[ SERVICE HUB · {service.shortName.toUpperCase()} ]</div>
-        <h1 className="font-[family-name:var(--font-display)] font-bold text-[#F2F2F0] leading-[0.92] mb-8" style={{ fontSize: "clamp(48px, 8vw, 120px)" }}>
+      {/* ─── HERO ─── */}
+      <section className="w-full min-h-[85svh] flex flex-col justify-center pt-40 pb-24 px-[var(--gutter)] max-w-[1400px] mx-auto">
+        <div className="font-[family-name:var(--font-body)] text-[11px] text-[#C8F135] tracking-[0.2em] uppercase mb-10">[ SERVICE HUB · {service.shortName.toUpperCase()} ]</div>
+        <h1 className="font-[family-name:var(--font-display)] font-bold leading-[0.9] -tracking-[0.03em] mb-12" style={{ fontSize: "clamp(64px, 12vw, 200px)" }}>
           {service.shortName}<span className="text-[#C8F135]">.</span>
         </h1>
-        <p className="font-[family-name:var(--font-body)] text-[20px] text-[#F2F2F0] leading-relaxed max-w-[700px] mb-12">{service.desc}</p>
+        <p className="font-[family-name:var(--font-display)] text-[24px] md:text-[32px] text-[#6B6B6B] leading-[1.1] max-w-[900px] mb-16">{service.desc}</p>
         
-        {/* Key Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-16 py-8 border-y border-[#222228]">
+        {/* Key Stats Block */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-12 py-12 border-y border-[#1E1E1E] mb-20">
           {service.keyStats.map(stat => (
-            <div key={stat.label}>
-              <div className="text-[10px] text-[#6B6B72] uppercase tracking-[0.2em] mb-2">{stat.label}</div>
-              <div className="text-[24px] font-[family-name:var(--font-display)] font-bold text-[#C8F135]">{stat.value}</div>
+            <div key={stat.label} className="flex flex-col gap-2">
+              <span className="font-[family-name:var(--font-body)] text-[10px] text-[#6B6B6B] uppercase tracking-[0.2em]">{stat.label}</span>
+              <span className="font-[family-name:var(--font-display)] font-bold text-[32px] md:text-[48px] text-[#C8F135] leading-none">{stat.value}</span>
             </div>
           ))}
-          <div>
-            <div className="text-[10px] text-[#6B6B72] uppercase tracking-[0.2em] mb-2">Availability</div>
-            <div className="text-[24px] font-[family-name:var(--font-display)] font-bold text-[#F2F2F0]">Q2 2026</div>
+          <div className="flex flex-col gap-2">
+            <span className="font-[family-name:var(--font-body)] text-[10px] text-[#6B6B6B] uppercase tracking-[0.2em]">AVAILABILITY</span>
+            <span className="font-[family-name:var(--font-display)] font-bold text-[32px] md:text-[48px] text-[#F5F5F0] leading-none">Q2 &apos;26</span>
           </div>
         </div>
 
-        <div className="bg-[#0A0A0F] border border-[#222228] p-12 mb-16 max-w-[900px]">
-           <h2 className="text-[11px] text-[#C8F135] uppercase tracking-[0.15em] mb-6">WHY AVORRIA FOR {service.shortName.toUpperCase()}?</h2>
-           <p className="font-[family-name:var(--font-body)] text-[16px] text-[#6B6B72] leading-relaxed italic border-l border-[#C8F135] pl-8">
-              "{service.detailedDesc}"
-           </p>
+        {/* Detailed Description */}
+        <div className="max-w-[1000px] grid grid-cols-1 lg:grid-cols-[1fr_350px] gap-20 items-start">
+           <div className="font-[family-name:var(--font-display)] text-[20px] md:text-[24px] text-[#6B6B6B] leading-relaxed italic border-l-2 border-[#C8F135] pl-10">
+              &quot;{service.detailedDesc}&quot;
+           </div>
+           <TransitionLink 
+             href="/start-a-project" 
+             className="bg-[#C8F135] text-[#0A0A0A] font-[family-name:var(--font-display)] font-bold text-[14px] uppercase px-12 py-6 tracking-widest hover:bg-[#F5F5F0] transition-colors text-center"
+             data-magnetic
+           >
+             WORK WITH US →
+           </TransitionLink>
         </div>
-
-        <TransitionLink href="/start-a-project" className="bg-[#C8F135] text-[#050508] font-[family-name:var(--font-display)] font-bold text-[13px] uppercase px-10 py-5 hover:bg-white transition-colors w-max">RESERVE A CONSULTATION →</TransitionLink>
       </section>
 
-      {/* Methodology walkthrough */}
-      <section className="max-w-[1400px] mx-auto px-[var(--gutter)] py-24">
-        <div className="text-[11px] text-[#6B6B72] uppercase tracking-[0.15em] mb-12">01. OUR METHODOLOGY</div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+      {/* ─── METHODOLOGY ─── */}
+      <section className="max-w-[1400px] mx-auto px-[var(--gutter)] py-24 md:py-40 border-t border-[#1E1E1E]">
+        <div className="font-[family-name:var(--font-body)] text-[11px] text-[#6B6B6B] uppercase tracking-[0.2em] mb-16">01. OUR ARCHITECTURAL BLUEPRINT</div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {service.methodology.map((step, idx) => (
-            <div key={step} className="p-8 border border-[#222228] bg-[#0A0A0F]">
-              <div className="text-[10px] text-[#C8F135] mb-4">PHASE 0{idx + 1}</div>
-              <h3 className="text-[18px] font-bold text-white mb-4">{step}</h3>
-              <p className="text-[13px] text-[#6B6B72] leading-relaxed">Systematic execution designed for scale, speed, and absolute reliability.</p>
+            <div key={step} className="p-10 border border-[#1E1E1E] bg-[#111111] flex flex-col gap-6 group hover:border-[#C8F135] transition-colors">
+              <span className="font-[family-name:var(--font-body)] text-[10px] text-[#C8F135] font-bold">PHASE 0{idx + 1}</span>
+              <h3 className="font-[family-name:var(--font-display)] font-bold text-[20px] text-[#F5F5F0] group-hover:text-[#C8F135] transition-colors">{step}</h3>
+              <p className="font-[family-name:var(--font-display)] text-[14px] text-[#6B6B6B] leading-relaxed">Systematic execution designed for scale, speed, and absolute reliability for our {service.shortName.toLowerCase()} clients.</p>
             </div>
           ))}
         </div>
       </section>
 
-      {/* Locations loop */}
-      <section className="max-w-[1400px] mx-auto px-[var(--gutter)] py-24 border-t border-[#222228]">
-        <div className="text-[11px] text-[#6B6B72] uppercase tracking-[0.15em] mb-12">02. NATIONWIDE SCALE</div>
+      {/* ─── NATIONWIDE REACH ─── */}
+      <section className="max-w-[1400px] mx-auto px-[var(--gutter)] py-24 md:py-40 border-t border-[#1E1E1E]">
+        <div className="font-[family-name:var(--font-body)] text-[11px] text-[#6B6B6B] uppercase tracking-[0.2em] mb-16">02. REGIONAL PRECISION</div>
         <div className="flex flex-wrap gap-4">
-          {locations.slice(0, 12).map(l => (
+          {locations.slice(0, 20).map(l => (
             <TransitionLink key={l.slug} href={`/${service.slug}/${l.slug}`}
-              className="text-[12px] border border-[#222228] px-6 py-4 hover:border-[#C8F135] hover:text-[#C8F135] transition-colors uppercase tracking-widest">
+              className="px-8 py-5 border border-[#1E1E1E] font-[family-name:var(--font-display)] text-[12px] font-bold uppercase tracking-widest text-[#6B6B6B] hover:text-[#C8F135] hover:border-[#C8F135] transition-all duration-300">
               {service.shortName} / {l.name}
             </TransitionLink>
           ))}

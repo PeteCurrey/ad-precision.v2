@@ -1,17 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { gsap } from "@/lib/gsap";
 import TransitionLink from "@/components/ui/TransitionLink";
 
 type Step = 1 | 2 | 3 | 4;
 
-const INDUSTRIES = ["Legal", "Healthcare", "Manufacturing", "Real Estate", "Finance / Fintech", "Hospitality", "Education", "Retail / E-Commerce", "Construction", "Professional Services", "SaaS / Technology", "Recruitment", "Automotive", "Charity / Non-Profit", "Food & Drink", "Facilities Management", "Other"];
-const SIZES = ["1–10 employees", "11–50 employees", "51–200 employees", "201–500 employees", "500+ employees"];
-const SERVICES = ["New Website", "Website Redesign", "SEO", "Paid Media", "AI Implementation", "Branding", "E-Commerce", "Analytics / CRO", "All of the above"];
-const BUDGETS = ["< £5,000", "£5,000–£15,000", "£15,000–£35,000", "£35,000–£75,000", "£75,000+", "Let's discuss"];
-const FOUND_US = ["Google", "LinkedIn", "Referral / Word of Mouth", "Social Media", "Conference / Event", "Other"];
-const CONTACT_PREFS = ["Email", "Phone", "Video Call"];
+const INDUSTRIES = ["Manufacturing", "Specialist Industrial", "Facilities Management", "Real Estate", "Hospitality", "SaaS / Tech", "E-Commerce", "Professional Services", "Other"];
+const SIZES = ["1–10", "11–50", "51–200", "201–500", "500+"];
+const SERVICES = ["New Website", "Redesign", "SEO Infrastructure", "Paid Media (Meta/Google)", "AI Implementation", "Custom Software", "Strategy Only"];
+const BUDGETS = ["< £5k", "£5k–£15k", "£15k–£35k", "£35k–£75k", "£75k+", "Let's discuss"];
+const TIMELINES = ["Immediate", "1–3 Months", "3–6 Months", "Exploring"];
 
 export default function StartAProjectClient() {
   const [step, setStep] = useState<Step>(1);
@@ -19,17 +19,18 @@ export default function StartAProjectClient() {
   const [sending, setSending] = useState(false);
 
   const [form, setForm] = useState({
-    // Step 1
-    company: "", website: "", industry: "", size: "",
-    // Step 2
+    // Step 1: Services & Description
     services: [] as string[], description: "",
-    // Step 3
-    budget: "", startDate: "", foundUs: "",
-    // Step 4
-    name: "", email: "", phone: "", contactPref: "",
+    // Step 2: About Business
+    company: "", website: "", industry: "", size: "",
+    // Step 3: Budget & Timeline
+    budget: "", timeline: "",
+    // Step 4: Contact
+    name: "", email: "", phone: "",
   });
 
-  const set = (key: keyof typeof form, val: string | string[]) => setForm(f => ({ ...f, [key]: val }));
+  const set = (key: keyof typeof form, val: any) => setForm(f => ({ ...f, [key]: val }));
+  
   const toggleService = (svc: string) => {
     set("services", form.services.includes(svc)
       ? form.services.filter(s => s !== svc)
@@ -38,199 +39,291 @@ export default function StartAProjectClient() {
   };
 
   const handleSubmit = async () => {
+    if (sending) return;
     setSending(true);
-    await fetch("/api/enquiry", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(form) }).catch(() => null);
-    setSending(false);
-    setDone(true);
+    try {
+      await fetch("/api/enquiry", { 
+        method: "POST", 
+        headers: { "Content-Type": "application/json" }, 
+        body: JSON.stringify(form) 
+      });
+      setDone(true);
+    } catch (e) {
+      console.error(e);
+      alert("Something went wrong. Please try again or email us directly at pete@avorria.com");
+    } finally {
+      setSending(false);
+    }
   };
 
-  const stepVariants = {
-    enter: { x: 60, opacity: 0 },
-    center: { x: 0, opacity: 1 },
-    exit: { x: -60, opacity: 0 },
-  };
+  // Entrance animations
+  const containerRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!containerRef.current) return;
+    gsap.fromTo(containerRef.current.querySelectorAll(".animate-in"),
+      { opacity: 0, y: 20 },
+      { opacity: 1, y: 0, duration: 0.8, stagger: 0.1, ease: "power3.out" }
+    );
+  }, []);
 
   if (done) {
     return (
-      <main className="w-full bg-[#050508] min-h-screen flex items-center justify-center px-[var(--gutter)]">
-        <motion.div className="text-center max-w-[600px]" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-          <div className="font-[family-name:var(--font-body)] text-[11px] text-[#C8F135] tracking-[0.15em] uppercase mb-6">[ BRIEF RECEIVED ]</div>
-          <h1 className="font-[family-name:var(--font-display)] font-bold text-[#F2F2F0] mb-6" style={{ fontSize: "clamp(36px, 5vw, 72px)" }}>
-            We have your brief.
+      <main className="w-full bg-[#0A0A0A] min-h-screen flex items-center justify-center px-[var(--gutter)] py-40">
+        <div className="text-center max-w-[700px]">
+          <div className="font-[family-name:var(--font-body)] text-[11px] text-[#C8F135] tracking-[0.2em] uppercase mb-10">[ MISSION RECEIVED ]</div>
+          <h1 className="font-[family-name:var(--font-display)] font-bold text-[#F5F5F0] leading-[0.92] mb-10" style={{ fontSize: "clamp(48px, 8vw, 110px)" }}>
+            We&apos;ll be in touch <br/> <span className="text-[#C8F135]">within 24 hours.</span>
           </h1>
-          <p className="font-[family-name:var(--font-body)] text-[15px] text-[#6B6B72] leading-relaxed mb-12">
-            One of our senior team will respond within one working day.
+          <p className="font-[family-name:var(--font-display)] text-[16px] text-[#6B6B6B] leading-relaxed mb-16 max-w-[500px] mx-auto">
+            Your brief has been routed to our architectural team. We don&apos;t do sales pitches — we&apos;ll come back with a strategy.
           </p>
-          <div className="flex flex-col gap-4 text-left border border-[#222228] p-8 mb-12">
-            {[["01 — REVIEW", "We'll read your brief and prepare a response."], ["02 — DISCOVERY CALL", "A 30-minute call to go deeper on your goals."], ["03 — PROPOSAL", "A fixed-fee proposal within 5 working days of the call."]].map(([num, desc]) => (
-              <div key={num} className="flex gap-4">
-                <span className="font-[family-name:var(--font-body)] font-bold text-[12px] text-[#C8F135]">{num}</span>
-                <span className="font-[family-name:var(--font-body)] text-[13px] text-[#6B6B72]">{desc}</span>
-              </div>
-            ))}
-          </div>
-          <TransitionLink href="/" className="font-[family-name:var(--font-body)] text-[12px] text-[#6B6B72] uppercase tracking-widest hover:text-[#C8F135] transition-colors">← Back to home</TransitionLink>
-        </motion.div>
+          <TransitionLink 
+            href="/" 
+            className="bg-[#C8F135] text-[#0A0A0A] font-[family-name:var(--font-display)] font-bold text-[14px] uppercase tracking-widest px-14 py-6 hover:bg-[#F5F5F0] transition-colors"
+          >
+            BACK TO HOME
+          </TransitionLink>
+        </div>
       </main>
     );
   }
 
   return (
-    <main className="w-full bg-[#050508] min-h-screen pt-40 pb-24 px-[var(--gutter)]">
-      <div className="max-w-[800px] mx-auto">
-
-        {/* Label */}
-        <div className="font-[family-name:var(--font-body)] text-[11px] text-[#C8F135] tracking-[0.15em] uppercase mb-10">[ START A PROJECT ]</div>
-
-        {/* Progress dots */}
-        <div className="flex items-center gap-3 mb-16">
-          {([1, 2, 3, 4] as Step[]).map(s => (
-            <div key={s} className="flex items-center gap-3">
-              <div className={`w-3 h-3 rounded-full transition-all duration-300 ${step === s ? "bg-[#C8F135] scale-125" : step > s ? "bg-[#C8F135]/40" : "bg-[#222228]"}`} />
-              {s < 4 && <div className="w-12 h-px bg-[#222228]" />}
+    <main ref={containerRef} className="w-full bg-[#0A0A0A] min-h-screen pt-48 pb-24 px-[var(--gutter)] flex flex-col items-center">
+      <div className="w-full max-w-[1400px] grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-20">
+        
+        {/* FORM SIDE */}
+        <div className="flex flex-col gap-12">
+          
+          <div className="animate-in flex flex-col gap-4">
+            <div className="font-[family-name:var(--font-body)] text-[11px] text-[#C8F135] tracking-[0.2em] uppercase">[ PROJECT ENQUIRY ]</div>
+            <div className="flex items-center gap-2">
+               {([1, 2, 3, 4] as Step[]).map(s => (
+                 <div key={s} className="flex items-center gap-2">
+                   <div className={`h-[2px] w-12 transition-all duration-500 ${step >= s ? "bg-[#C8F135]" : "bg-[#1E1E1E]"}`} />
+                 </div>
+               ))}
+               <span className="font-[family-name:var(--font-body)] text-[10px] text-[#6B6B6B] ml-4 font-bold tracking-widest uppercase">STEP {step} / 4</span>
             </div>
-          ))}
-          <span className="font-[family-name:var(--font-body)] text-[11px] text-[#6B6B72] ml-3">Step {step} of 4</span>
+          </div>
+
+          <AnimatePresence mode="wait">
+            {step === 1 && (
+              <motion.div 
+                key="step1" 
+                initial={{ opacity: 0, x: 20 }} 
+                animate={{ opacity: 1, x: 0 }} 
+                exit={{ opacity: 0, x: -20 }}
+                className="flex flex-col gap-12"
+              >
+                <div className="flex flex-col gap-4">
+                  <h1 className="font-[family-name:var(--font-display)] font-bold text-[40px] md:text-[64px] text-[#F5F5F0] leading-[1]">What are we building?</h1>
+                  <p className="font-[family-name:var(--font-display)] text-[16px] text-[#6B6B6B]">Select the services you&apos;re interested in.</p>
+                </div>
+
+                <div className="flex flex-wrap gap-3">
+                  {SERVICES.map(svc => (
+                    <button 
+                      key={svc} 
+                      onClick={() => toggleService(svc)}
+                      className={`font-[family-name:var(--font-display)] text-[13px] font-bold uppercase tracking-widest px-6 py-4 border transition-all duration-300 ${form.services.includes(svc) ? "bg-[#C8F135] text-[#0A0A0A] border-[#C8F135]" : "text-[#6B6B6B] border-[#1E1E1E] hover:border-[#C8F135] hover:text-[#C8F135]"}`}
+                    >
+                      {svc}
+                    </button>
+                  ))}
+                </div>
+
+                <div className="flex flex-col gap-4">
+                  <label className="font-[family-name:var(--font-body)] text-[11px] text-[#6B6B6B] uppercase tracking-[0.2em]">TELL US ABOUT THE GOALS</label>
+                  <textarea 
+                    value={form.description} 
+                    onChange={e => set("description", e.target.value)}
+                    className="bg-[#111111] border border-[#1E1E1E] p-6 font-[family-name:var(--font-display)] text-[16px] text-[#F5F5F0] focus:border-[#C8F135] outline-none transition-colors resize-none h-[200px]"
+                    placeholder="Briefly describe what you're looking to achieve..."
+                  />
+                </div>
+              </motion.div>
+            )}
+
+            {step === 2 && (
+              <motion.div 
+                key="step2" 
+                initial={{ opacity: 0, x: 20 }} 
+                animate={{ opacity: 1, x: 0 }} 
+                exit={{ opacity: 0, x: -20 }}
+                className="flex flex-col gap-12"
+              >
+                <div className="flex flex-col gap-4">
+                  <h1 className="font-[family-name:var(--font-display)] font-bold text-[40px] md:text-[64px] text-[#F5F5F0] leading-[1]">About your company.</h1>
+                  <p className="font-[family-name:var(--font-display)] text-[16px] text-[#6B6B6B]">Help us understand the scale and sector.</p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div className="flex flex-col gap-2">
+                    <label className="font-[family-name:var(--font-body)] text-[10px] text-[#6B6B6B] uppercase tracking-[0.2em]">COMPANY NAME</label>
+                    <input type="text" value={form.company} onChange={e => set("company", e.target.value)} className="bg-[#111111] border border-[#1E1E1E] p-6 text-white focus:border-[#C8F135] outline-none transition-colors" />
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <label className="font-[family-name:var(--font-body)] text-[10px] text-[#6B6B6B] uppercase tracking-[0.2em]">WEBSITE URL</label>
+                    <input type="text" value={form.website} onChange={e => set("website", e.target.value)} className="bg-[#111111] border border-[#1E1E1E] p-6 text-white focus:border-[#C8F135] outline-none transition-colors" />
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <label className="font-[family-name:var(--font-body)] text-[10px] text-[#6B6B6B] uppercase tracking-[0.2em]">INDUSTRY</label>
+                    <select value={form.industry} onChange={e => set("industry", e.target.value)} className="bg-[#111111] border border-[#1E1E1E] p-6 text-white focus:border-[#C8F135] outline-none transition-colors appearance-none">
+                      <option value="">Select industry</option>
+                      {INDUSTRIES.map(i => <option key={i} value={i}>{i}</option>)}
+                    </select>
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <label className="font-[family-name:var(--font-body)] text-[10px] text-[#6B6B6B] uppercase tracking-[0.2em]">TEAM SIZE</label>
+                     <div className="grid grid-cols-3 gap-2">
+                        {SIZES.map(s => (
+                          <button key={s} onClick={() => set("size", s)} className={`p-4 border text-[12px] font-bold transition-all ${form.size === s ? "bg-[#C8F135] text-[#0A0A0A] border-[#C8F135]" : "text-[#6B6B6B] border-[#1E1E1E] hover:border-[#C8F135]"}`}>
+                            {s}
+                          </button>
+                        ))}
+                     </div>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+
+            {step === 3 && (
+              <motion.div 
+                key="step3" 
+                initial={{ opacity: 0, x: 20 }} 
+                animate={{ opacity: 1, x: 0 }} 
+                exit={{ opacity: 0, x: -20 }}
+                className="flex flex-col gap-12"
+              >
+                <div className="flex flex-col gap-4">
+                  <h1 className="font-[family-name:var(--font-display)] font-bold text-[40px] md:text-[64px] text-[#F5F5F0] leading-[1]">Numbers & timing.</h1>
+                  <p className="font-[family-name:var(--font-display)] text-[16px] text-[#6B6B6B]">We work with budgets of all sizes, but knowing your range helps us architect the right solution.</p>
+                </div>
+
+                <div className="flex flex-col gap-10">
+                  <div className="flex flex-col gap-4">
+                    <label className="font-[family-name:var(--font-body)] text-[10px] text-[#6B6B6B] uppercase tracking-[0.2em]">APPROXIMATE BUDGET</label>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                      {BUDGETS.map(b => (
+                        <button key={b} onClick={() => set("budget", b)} className={`p-6 border text-[14px] font-bold uppercase transition-all ${form.budget === b ? "bg-[#C8F135] text-[#0A0A0A] border-[#C8F135]" : "text-[#6B6B6B] border-[#1E1E1E] hover:border-[#C8F135]"}`}>
+                          {b}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col gap-4">
+                    <label className="font-[family-name:var(--font-body)] text-[10px] text-[#6B6B6B] uppercase tracking-[0.2em]">TARGET TIMELINE</label>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                      {TIMELINES.map(t => (
+                        <button key={t} onClick={() => set("timeline", t)} className={`p-6 border text-[14px] font-bold uppercase transition-all ${form.timeline === t ? "bg-[#C8F135] text-[#0A0A0A] border-[#C8F135]" : "text-[#6B6B6B] border-[#1E1E1E] hover:border-[#C8F135]"}`}>
+                          {t}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+
+            {step === 4 && (
+              <motion.div 
+                key="step4" 
+                initial={{ opacity: 0, x: 20 }} 
+                animate={{ opacity: 1, x: 0 }} 
+                exit={{ opacity: 0, x: -20 }}
+                className="flex flex-col gap-12"
+              >
+                <div className="flex flex-col gap-4">
+                  <h1 className="font-[family-name:var(--font-display)] font-bold text-[40px] md:text-[64px] text-[#F5F5F0] leading-[1]">One last thing.</h1>
+                  <p className="font-[family-name:var(--font-display)] text-[16px] text-[#6B6B6B]">Who should we respond to?</p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div className="flex flex-col gap-2">
+                    <label className="font-[family-name:var(--font-body)] text-[10px] text-[#6B6B6B] uppercase tracking-[0.2em]">FULL NAME</label>
+                    <input type="text" value={form.name} onChange={e => set("name", e.target.value)} className="bg-[#111111] border border-[#1E1E1E] p-6 text-white focus:border-[#C8F135] outline-none transition-colors" />
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <label className="font-[family-name:var(--font-body)] text-[10px] text-[#6B6B6B] uppercase tracking-[0.2em]">EMAIL ADDRESS</label>
+                    <input type="email" value={form.email} onChange={e => set("email", e.target.value)} className="bg-[#111111] border border-[#1E1E1E] p-6 text-white focus:border-[#C8F135] outline-none transition-colors" />
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <label className="font-[family-name:var(--font-body)] text-[10px] text-[#6B6B6B] uppercase tracking-[0.2em]">PHONE NUMBER</label>
+                    <input type="tel" value={form.phone} onChange={e => set("phone", e.target.value)} className="bg-[#111111] border border-[#1E1E1E] p-6 text-white focus:border-[#C8F135] outline-none transition-colors" />
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Nav */}
+          <div className="flex items-center justify-between pt-12 border-t border-[#1E1E1E]">
+            {step > 1 ? (
+              <button 
+                onClick={() => setStep(s => (s - 1) as Step)}
+                className="font-[family-name:var(--font-display)] font-bold text-[14px] text-[#6B6B6B] uppercase tracking-widest hover:text-white transition-colors"
+                data-magnetic
+              >
+                ← BACK
+              </button>
+            ) : <div />}
+
+            {step < 4 ? (
+              <button 
+                onClick={() => setStep(s => (s + 1) as Step)}
+                className="bg-[#C8F135] text-[#0A0A0A] font-[family-name:var(--font-display)] font-bold text-[14px] uppercase tracking-widest px-14 py-6 hover:bg-[#F5F5F0] transition-colors"
+                data-magnetic
+              >
+                NEXT STEP →
+              </button>
+            ) : (
+              <button 
+                onClick={handleSubmit}
+                disabled={sending}
+                className="bg-[#C8F135] text-[#0A0A0A] font-[family-name:var(--font-display)] font-bold text-[14px] uppercase tracking-widest px-14 py-6 hover:bg-[#F5F5F0] transition-colors disabled:opacity-50"
+                data-magnetic
+              >
+                {sending ? "TRANSMITTING..." : "SUBMIT BRIEF →"}
+              </button>
+            )}
+          </div>
+
         </div>
 
-        {/* Step content */}
-        <AnimatePresence mode="wait">
-          {step === 1 && (
-            <motion.div key="step1" variants={stepVariants} initial="enter" animate="center" exit="exit" transition={{ duration: 0.3 }}>
-              <h1 className="font-[family-name:var(--font-display)] font-bold text-[#F2F2F0] mb-10" style={{ fontSize: "clamp(28px, 4vw, 56px)" }}>About your business</h1>
-              <div className="flex flex-col gap-6">
-                {[["Company Name", "company", "text"], ["Website (if you have one)", "website", "url"]].map(([label, key, type]) => (
-                  <div key={key} className="flex flex-col gap-2">
-                    <label className="font-[family-name:var(--font-body)] text-[11px] text-[#6B6B72] uppercase tracking-widest">{label}</label>
-                    <input type={type} value={form[key as keyof typeof form] as string} onChange={e => set(key as keyof typeof form, e.target.value)}
-                      className="font-[family-name:var(--font-body)] text-[14px] text-[#F2F2F0] bg-transparent border border-[#222228] px-5 py-4 outline-none focus:border-[#C8F135] transition-colors" />
-                  </div>
-                ))}
-                <div className="flex flex-col gap-2">
-                  <label className="font-[family-name:var(--font-body)] text-[11px] text-[#6B6B72] uppercase tracking-widest">Industry</label>
-                  <select value={form.industry} onChange={e => set("industry", e.target.value)}
-                    className="font-[family-name:var(--font-body)] text-[14px] text-[#F2F2F0] bg-[#050508] border border-[#222228] px-5 py-4 outline-none focus:border-[#C8F135] transition-colors">
-                    <option value="">Select industry</option>
-                    {INDUSTRIES.map(i => <option key={i} value={i}>{i}</option>)}
-                  </select>
-                </div>
-                <div className="flex flex-col gap-2">
-                  <label className="font-[family-name:var(--font-body)] text-[11px] text-[#6B6B72] uppercase tracking-widest">Company Size</label>
-                  <select value={form.size} onChange={e => set("size", e.target.value)}
-                    className="font-[family-name:var(--font-body)] text-[14px] text-[#F2F2F0] bg-[#050508] border border-[#222228] px-5 py-4 outline-none focus:border-[#C8F135] transition-colors">
-                    <option value="">Select size</option>
-                    {SIZES.map(s => <option key={s} value={s}>{s}</option>)}
-                  </select>
-                </div>
-              </div>
-            </motion.div>
-          )}
+        {/* SIDEBAR SIDE */}
+        <div className="hidden lg:flex flex-col gap-12">
+          
+          <div className="animate-in bg-[#111111] border border-[#1E1E1E] p-12 flex flex-col gap-10 sticky top-32">
+            
+            <div className="flex flex-col gap-4">
+              <h3 className="font-[family-name:var(--font-display)] font-bold text-[24px] text-[#F5F5F0] leading-tight text-balance">Why Avorria?</h3>
+              <p className="font-[family-name:var(--font-body)] text-[13px] text-[#6B6B6B] leading-relaxed">We don&apos;t just build websites. We build commercial infrastructure for businesses that want to grow.</p>
+            </div>
 
-          {step === 2 && (
-            <motion.div key="step2" variants={stepVariants} initial="enter" animate="center" exit="exit" transition={{ duration: 0.3 }}>
-              <h1 className="font-[family-name:var(--font-display)] font-bold text-[#F2F2F0] mb-10" style={{ fontSize: "clamp(28px, 4vw, 56px)" }}>About your project</h1>
-              <div className="flex flex-col gap-6">
-                <div className="flex flex-col gap-3">
-                  <label className="font-[family-name:var(--font-body)] text-[11px] text-[#6B6B72] uppercase tracking-widest">What do you need?</label>
-                  <div className="flex flex-wrap gap-2">
-                    {SERVICES.map(svc => (
-                      <button key={svc} onClick={() => toggleService(svc)}
-                        className={`font-[family-name:var(--font-body)] text-[11px] uppercase tracking-widest px-4 py-2.5 border transition-all ${form.services.includes(svc) ? "bg-[#C8F135] text-[#050508] border-[#C8F135]" : "text-[#6B6B72] border-[#222228] hover:border-[#C8F135]"}`}>
-                        {svc}
-                      </button>
-                    ))}
-                  </div>
+            <div className="flex flex-col gap-8">
+              {[
+                { title: "Commercial Reality", desc: "Our founder operates seven non-agency businesses. We know your bottom line." },
+                { title: "Next-Gen Performance", desc: "98+ PageSpeed. Zero WordPress. Hand-coded Next.js infrastructure." },
+                { title: "Confidentiality", desc: "All briefs are handled with 100% strict confidentiality." }
+              ].map(item => (
+                <div key={item.title} className="flex flex-col gap-2">
+                   <h4 className="font-[family-name:var(--font-display)] font-bold text-[14px] text-[#C8F135] uppercase tracking-widest">{item.title}</h4>
+                   <p className="font-[family-name:var(--font-body)] text-[12px] text-[#6B6B6B]">{item.desc}</p>
                 </div>
-                <div className="flex flex-col gap-2">
-                  <label className="font-[family-name:var(--font-body)] text-[11px] text-[#6B6B72] uppercase tracking-widest">Tell us about the project</label>
-                  <textarea rows={5} value={form.description} onChange={e => set("description", e.target.value)}
-                    className="font-[family-name:var(--font-body)] text-[14px] text-[#F2F2F0] bg-transparent border border-[#222228] px-5 py-4 outline-none focus:border-[#C8F135] transition-colors resize-none"
-                    placeholder="What's the project? What are your goals? What's not working currently?" />
-                </div>
-              </div>
-            </motion.div>
-          )}
+              ))}
+            </div>
 
-          {step === 3 && (
-            <motion.div key="step3" variants={stepVariants} initial="enter" animate="center" exit="exit" transition={{ duration: 0.3 }}>
-              <h1 className="font-[family-name:var(--font-display)] font-bold text-[#F2F2F0] mb-10" style={{ fontSize: "clamp(28px, 4vw, 56px)" }}>Budget & timeline</h1>
-              <div className="flex flex-col gap-6">
-                <div className="flex flex-col gap-2">
-                  <label className="font-[family-name:var(--font-body)] text-[11px] text-[#6B6B72] uppercase tracking-widest">Budget Range</label>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                    {BUDGETS.map(b => (
-                      <button key={b} onClick={() => set("budget", b)}
-                        className={`font-[family-name:var(--font-body)] text-[12px] px-4 py-3 border transition-all ${form.budget === b ? "bg-[#C8F135] text-[#050508] border-[#C8F135]" : "text-[#6B6B72] border-[#222228] hover:border-[#C8F135]"}`}>
-                        {b}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-                <div className="flex flex-col gap-2">
-                  <label className="font-[family-name:var(--font-body)] text-[11px] text-[#6B6B72] uppercase tracking-widest">Ideal Start Date</label>
-                  <input type="date" value={form.startDate} onChange={e => set("startDate", e.target.value)}
-                    className="font-[family-name:var(--font-body)] text-[14px] text-[#F2F2F0] bg-transparent border border-[#222228] px-5 py-4 outline-none focus:border-[#C8F135] transition-colors" />
-                </div>
-                <div className="flex flex-col gap-2">
-                  <label className="font-[family-name:var(--font-body)] text-[11px] text-[#6B6B72] uppercase tracking-widest">How did you find us?</label>
-                  <select value={form.foundUs} onChange={e => set("foundUs", e.target.value)}
-                    className="font-[family-name:var(--font-body)] text-[14px] text-[#F2F2F0] bg-[#050508] border border-[#222228] px-5 py-4 outline-none focus:border-[#C8F135] transition-colors">
-                    <option value="">Select</option>
-                    {FOUND_US.map(f => <option key={f} value={f}>{f}</option>)}
-                  </select>
-                </div>
-              </div>
-            </motion.div>
-          )}
+            <div className="pt-8 border-t border-[#1E1E1E]">
+               <p className="font-[family-name:var(--font-body)] text-[11px] text-[#6B6B6B] italic">&quot;The most data-driven agency we&apos;ve ever worked with.&quot;</p>
+               <span className="font-[family-name:var(--font-body)] text-[10px] text-white font-bold block mt-2 tracking-widest uppercase">SYNERGY FM GROUP</span>
+            </div>
 
-          {step === 4 && (
-            <motion.div key="step4" variants={stepVariants} initial="enter" animate="center" exit="exit" transition={{ duration: 0.3 }}>
-              <h1 className="font-[family-name:var(--font-display)] font-bold text-[#F2F2F0] mb-10" style={{ fontSize: "clamp(28px, 4vw, 56px)" }}>Your details</h1>
-              <div className="flex flex-col gap-6">
-                {[["Your Name", "name", "text"], ["Email Address", "email", "email"], ["Phone Number (optional)", "phone", "tel"]].map(([label, key, type]) => (
-                  <div key={key} className="flex flex-col gap-2">
-                    <label className="font-[family-name:var(--font-body)] text-[11px] text-[#6B6B72] uppercase tracking-widest">{label}</label>
-                    <input type={type} value={form[key as keyof typeof form] as string} onChange={e => set(key as keyof typeof form, e.target.value)}
-                      className="font-[family-name:var(--font-body)] text-[14px] text-[#F2F2F0] bg-transparent border border-[#222228] px-5 py-4 outline-none focus:border-[#C8F135] transition-colors" />
-                  </div>
-                ))}
-                <div className="flex flex-col gap-2">
-                  <label className="font-[family-name:var(--font-body)] text-[11px] text-[#6B6B72] uppercase tracking-widest">Preferred Contact</label>
-                  <div className="flex gap-3">
-                    {CONTACT_PREFS.map(p => (
-                      <button key={p} onClick={() => set("contactPref", p)}
-                        className={`font-[family-name:var(--font-body)] text-[12px] px-5 py-3 border transition-all ${form.contactPref === p ? "bg-[#C8F135] text-[#050508] border-[#C8F135]" : "text-[#6B6B72] border-[#222228] hover:border-[#C8F135]"}`}>
-                        {p}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+          </div>
 
-        {/* Navigation */}
-        <div className="flex items-center justify-between mt-16 pt-8 border-t border-[#222228]">
-          {step > 1 ? (
-            <button onClick={() => setStep(s => (s - 1) as Step)}
-              className="font-[family-name:var(--font-body)] text-[12px] text-[#6B6B72] uppercase tracking-widest hover:text-[#F2F2F0] transition-colors">
-              ← Back
-            </button>
-          ) : <div />}
-
-          {step < 4 ? (
-            <button onClick={() => setStep(s => (s + 1) as Step)}
-              className="bg-[#C8F135] text-[#050508] font-[family-name:var(--font-display)] font-bold text-[13px] uppercase px-10 py-5 hover:bg-white transition-colors">
-              Next →
-            </button>
-          ) : (
-            <button onClick={handleSubmit} disabled={sending}
-              className="bg-[#C8F135] text-[#050508] font-[family-name:var(--font-display)] font-bold text-[13px] uppercase px-10 py-5 hover:bg-white transition-colors disabled:opacity-60">
-              {sending ? "Sending..." : "Send Brief →"}
-            </button>
-          )}
         </div>
+
       </div>
     </main>
   );

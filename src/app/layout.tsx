@@ -20,8 +20,19 @@ const dmMono = DM_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Avorria | The Architects of Attention",
-  description: "We build digital weapons. Premium web design, AI implementation, SEO and paid media.",
+  title: {
+    default: "Avorria | The Architects of Attention",
+    template: "%s | Avorria",
+  },
+  description: "We build digital weapons. Premium web design, AI implementation, SEO and paid media for businesses serious about growth.",
+  metadataBase: new URL("https://avorria.com"),
+  openGraph: {
+    title: "Avorria | The Architects of Attention",
+    description: "Premium web design, AI implementation, SEO and paid media.",
+    type: "website",
+    locale: "en_GB",
+  },
+  robots: { index: true, follow: true },
 };
 
 export default function RootLayout({
@@ -30,7 +41,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="bg-[#050508]">
+    <html lang="en" className="bg-[#0A0A0A]">
       <body className={`${syne.variable} ${dmMono.variable} antialiased`}>
         <SmoothScroll>
           <Cursor />
@@ -38,7 +49,7 @@ export default function RootLayout({
           {/* Transition Overlays */}
           <div 
             id="transition-overlay" 
-            className="fixed inset-0 bg-[#050508] z-[9990] pointer-events-none" 
+            className="fixed inset-0 bg-[#0A0A0A] z-[9990] pointer-events-none" 
             style={{ clipPath: "inset(100% 0 0 0)" }} 
           />
           <div 

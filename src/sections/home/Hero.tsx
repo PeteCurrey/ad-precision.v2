@@ -99,14 +99,14 @@ export default function Hero({ ready }: { ready: boolean }) {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-12">
           
           {/* Left Column */}
-          <div className="w-full md:w-[70%] flex flex-col gap-8">
+          <div className="w-full md:w-[70%] flex flex-col gap-12">
             <div className="font-[family-name:var(--font-body)] text-[11px] text-[#C8F135] tracking-[0.2em] uppercase">
               [ 001 — THE ARCHITECTS OF ATTENTION ]
             </div>
 
             <h1 
-              className="font-[family-name:var(--font-display)] font-bold text-[#F5F5F0] leading-[0.88] uppercase -tracking-[0.04em]"
-              style={{ fontSize: "clamp(60px, 13vw, 200px)" }}
+              className="font-[family-name:var(--font-display)] font-bold text-[#F5F5F0] leading-[0.88] uppercase -tracking-[0.04em] my-10 md:my-14"
+              style={{ fontSize: "clamp(54px, 11vw, 170px)" }}
             >
               <div className="overflow-hidden pb-1">
                 <div ref={(el) => { h1Lines.current[0] = el; }}>WE BUILD</div>

@@ -108,13 +108,13 @@ export default function Hero({ ready }: { ready: boolean }) {
               className="font-[family-name:var(--font-display)] font-bold text-[#F5F5F0] leading-[0.88] uppercase -tracking-[0.04em] my-10 md:my-14"
               style={{ fontSize: "clamp(54px, 11vw, 170px)" }}
             >
-              <div className="overflow-hidden pb-1">
+              <div className="overflow-hidden pb-4 px-4 -mx-4">
                 <div ref={(el) => { h1Lines.current[0] = el; }}>WE BUILD</div>
               </div>
-              <div className="overflow-hidden pb-1">
+              <div className="overflow-hidden pb-4 px-4 -mx-4">
                 <div ref={(el) => { h1Lines.current[1] = el; }}>DIGITAL</div>
               </div>
-              <div className="overflow-hidden pb-1 text-[#C8F135]">
+              <div className="overflow-hidden pb-4 px-4 -mx-4 text-[#C8F135]">
                 <div ref={(el) => { h1Lines.current[2] = el; }}>WEAPONS.</div>
               </div>
             </h1>

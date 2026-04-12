@@ -99,42 +99,42 @@ export default function Hero({ ready }: { ready: boolean }) {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-12">
           
           {/* Left Column */}
-          <div className="w-full md:w-[70%] flex flex-col gap-12">
-            <div className="font-[family-name:var(--font-body)] text-[11px] text-[#C8F135] tracking-[0.2em] uppercase">
+          <div className="w-full md:w-[70%] flex flex-col gap-16">
+            <div className="font-[family-name:var(--font-body)] text-[11px] text-[#C8F135] tracking-[0.3em] uppercase opacity-80">
               [ 001 — THE ARCHITECTS OF ATTENTION ]
             </div>
 
             <h1 
-              className="font-[family-name:var(--font-display)] font-bold text-[#F5F5F0] leading-[0.88] uppercase -tracking-[0.04em] my-10 md:my-14"
-              style={{ fontSize: "clamp(54px, 11vw, 170px)" }}
+              className="font-[family-name:var(--font-display)] font-bold text-[#F5F5F0] leading-[1.02] uppercase -tracking-[0.02em] my-12 md:my-16"
+              style={{ fontSize: "clamp(54px, 11vw, 160px)" }}
             >
-              <div className="overflow-hidden pb-4 px-4 -mx-4">
+              <div className="overflow-y-hidden overflow-x-visible pb-4 px-12 -mx-12">
                 <div ref={(el) => { h1Lines.current[0] = el; }}>WE BUILD</div>
               </div>
-              <div className="overflow-hidden pb-4 px-4 -mx-4">
+              <div className="overflow-y-hidden overflow-x-visible pb-4 px-12 -mx-12">
                 <div ref={(el) => { h1Lines.current[1] = el; }}>DIGITAL</div>
               </div>
-              <div className="overflow-hidden pb-4 px-4 -mx-4 text-[#C8F135]">
+              <div className="overflow-y-hidden overflow-x-visible pb-4 px-12 -mx-12 text-[#C8F135]">
                 <div ref={(el) => { h1Lines.current[2] = el; }}>WEAPONS.</div>
               </div>
             </h1>
 
-            <div ref={subheadRef} className="flex flex-col gap-8">
-              <p className="font-[family-name:var(--font-display)] text-[#6B6B6B] text-[18px] md:text-[22px] leading-relaxed max-w-[540px]">
+            <div ref={subheadRef} className="flex flex-col gap-12">
+              <p className="font-[family-name:var(--font-display)] text-[#6B6B6B] text-[18px] md:text-[22px] leading-relaxed max-w-[560px]">
                 Premium web design, AI implementation, and performance SEO for businesses serious about dominance.
               </p>
               
-              <div ref={ctaRef} className="flex flex-wrap gap-4">
+              <div ref={ctaRef} className="flex flex-wrap gap-6">
                 <TransitionLink 
                   href="/start-a-project" 
-                  className="bg-[#C8F135] text-[#0A0A0A] font-[family-name:var(--font-display)] font-bold text-[13px] uppercase tracking-widest px-[40px] py-[20px] hover:bg-[#F5F5F0] transition-colors"
+                  className="bg-[#C8F135] text-[#0A0A0A] font-[family-name:var(--font-display)] font-bold text-[13px] uppercase tracking-widest px-[48px] py-[22px] hover:bg-[#F5F5F0] transition-colors"
                   data-magnetic
                 >
                   START A PROJECT →
                 </TransitionLink>
                 <TransitionLink 
                   href="/work" 
-                  className="bg-transparent text-[#F5F5F0] font-[family-name:var(--font-display)] font-bold text-[13px] uppercase tracking-widest px-[40px] py-[20px] border border-[#1E1E1E] hover:border-[#C8F135] hover:text-[#C8F135] transition-colors"
+                  className="bg-transparent text-[#F5F5F0] font-[family-name:var(--font-display)] font-bold text-[13px] uppercase tracking-widest px-[48px] py-[22px] border border-[#1E1E1E] hover:border-[#C8F135] hover:text-[#C8F135] transition-colors"
                   data-magnetic
                 >
                   VIEW OUR WORK
